@@ -5,10 +5,12 @@ import numpy as np
 import cv2
 from sklearn.cluster import KMeans
 
+# heat maps
 import matplotlib.pyplot as plt
 from scipy.stats import kde
 
-from PIL import Image
+# rotating, scaling, and cropping
+from PIL import Image, ImageChops
 
 
 #images are 1163 x 828
@@ -48,7 +50,7 @@ def main(n_observations, n_clusters, n_bins):
     cv2.imwrite('output/raw_data.png', output_img - base_img)
     for x, y in kmeans.cluster_centers_:
         cv2.circle(output_img, (int(y), int(x)), 10, (255,150,0), -1)
-    cv2.imshow('image', output_img)
+    #cv2.imshow('image', output_img)
     cv2.imwrite('output/output_clusters.png', output_img)
     cv2.imwrite('output/raw_clusters.png', output_img - base_img)
 
@@ -67,26 +69,31 @@ def heat_map(data, n_bins, output_img):
     zi = k(np.vstack([xi.flatten(), yi.flatten()]))
 
     #axes.set_title('Gaussian KDE')
-    axes.pcolormesh(xi, yi, zi.reshape(xi.shape))
     plt.ylim((x_min, x_max))
     plt.xlim((y_min, y_max))
     plt.axis('off')
-    fig.tight_layout()
-    plt.savefig('output/foo.png', bbox_inches='tight')
-    plt.show()
-
-    #rotate clockwise 
-    #img = cv2.imread('', cv2.IMREAD_COLOR)
+    axes.pcolormesh(xi, yi, zi.reshape(xi.shape))
+    #fig.tight_layout()
+    plt.savefig('output/foo.png', bbox_inches='tight', pad_inches=0)
+    #plt.show()
     
-    src_im = Image.open("output/foo.png")
-    angle = 270
-    size = x_max, y_max
+    im = Image.open("output/foo.png")
 
+    # remove whitespace
+    bg = Image.new(im.mode, im.size, im.getpixel((0,0)))
+    diff = ImageChops.difference(im, bg)
+    diff = ImageChops.add(diff, diff, 2.0, -100)
+    bbox = diff.getbbox()
+    im = im.crop(bbox)
+
+    angle = 270
+    w, h = im.size
     #dst_im = Image.new("RGBA", (x_max, y_max), "blue" )
-    im = src_im.convert('RGBA')
-    rot = im.rotate( angle, expand=1 ).resize(size)
+    im = im.convert('RGBA')
+    im = im.rotate( angle, expand=1 )
+    im = im.resize((x_max, y_max))
     #dst_im.paste( rot, (50, 50), rot )
-    rot.save("output/new_foo.png")
+    im.save("output/new_foo.png")
 
     heat_img = cv2.imread('output/new_foo.png', cv2.IMREAD_COLOR)
     dst = cv2.addWeighted(output_img, 0.5, heat_img, 0.5, 0)
