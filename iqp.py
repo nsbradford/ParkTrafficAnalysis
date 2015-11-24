@@ -18,10 +18,15 @@ x_min = 0
 x_max = 1163
 y_min = 0
 y_max = 828
+
 satellite_file = "images/satellite.png"
 observation_file = "observations/observation_0"
 observation_file_ext = ".png"
+
 heatmap_file = "output/heat_map.png"
+raw_heatmap = "output/foo.png"
+transformed_heatmap = "output/new_foo.png"
+
 
 def main(n_observations, n_clusters, n_bins):
     base_img = cv2.imread(satellite_file, cv2.IMREAD_COLOR)
@@ -37,71 +42,62 @@ def main(n_observations, n_clusters, n_bins):
         for i in xrange(rows):
             for j in xrange(columns):
                 if img.item(i,j,2) > 0:
-                    #print "(", i, ",", j, ")"
                     data.append([i, j])
+    cluster_map(data, n_clusters, output_img, base_img)
+    heat_map(data, n_bins, output_img)
+
+
+def cluster_map(data, n_clusters, output_img, base_img):
+    """ Apply KMeans clustering to """
     kmeans = KMeans(n_clusters)
     kmeans_data = data
     kmeans.fit(kmeans_data)
-    #print kmeans.cluster_centers_
-    #print data
     for x, y in data:
         cv2.circle(output_img,(int(y), int(x)), 4, (0,0,255), -1)
     cv2.imwrite('output/input_data.png', output_img)
     cv2.imwrite('output/raw_data.png', output_img - base_img)
     for x, y in kmeans.cluster_centers_:
         cv2.circle(output_img, (int(y), int(x)), 10, (255,150,0), -1)
-    #cv2.imshow('image', output_img)
     cv2.imwrite('output/output_clusters.png', output_img)
-    cv2.imwrite('output/raw_clusters.png', output_img - base_img)
-
-    heat_map(data, n_bins, output_img)
+    cv2.imwrite('output/raw_clusters.png', output_img - base_img)   
 
 
 # from http://stackoverflow.com/questions/19390320/scatterplot-contours-in-matplotlib
 def heat_map(data, n_bins, output_img):
     data = np.array(data)
-    x, y = [i[0] for i in data], [j[1] for j in data]
-    fig, axes = plt.subplots(ncols=1, nrows=1, sharex=True, sharey=True)
 
-    # Evaluate a gaussian kde on a regular grid of n_bins x n_bins over data extents
+    # Pyplot: Evaluate a gaussian kde on a regular grid of n_bins x n_bins over data extents
+    x, y = [i[0] for i in data], [j[1] for j in data]
+    fig, axes = plt.subplots(ncols=1, nrows=1, sharex=True, sharey=True) 
     k = kde.gaussian_kde(data.T)
     xi, yi = np.mgrid[y_min:y_max:n_bins*1j, x_min:x_max:n_bins*1j] #xi, yi = np.mgrid[x.min():x.max():n_bins*1j, y.min():y.max():n_bins*1j]
     zi = k(np.vstack([xi.flatten(), yi.flatten()]))
-
-    #axes.set_title('Gaussian KDE')
     plt.ylim((x_min, x_max))
     plt.xlim((y_min, y_max))
     plt.axis('off')
     axes.pcolormesh(xi, yi, zi.reshape(xi.shape))
-    #fig.tight_layout()
-    plt.savefig('output/foo.png', bbox_inches='tight', pad_inches=0)
-    #plt.show()
+    plt.savefig(raw_heatmap, bbox_inches='tight', pad_inches=0)
     
-    im = Image.open("output/foo.png")
-
-    # remove whitespace
+    # PIL: remove bordering whitespace (crop), rotate, and resize   
+    im = Image.open(raw_heatmap)
     bg = Image.new(im.mode, im.size, im.getpixel((0,0)))
     diff = ImageChops.difference(im, bg)
     diff = ImageChops.add(diff, diff, 2.0, -100)
     bbox = diff.getbbox()
     im = im.crop(bbox)
-
     angle = 270
     w, h = im.size
-    #dst_im = Image.new("RGBA", (x_max, y_max), "blue" )
-    im = im.convert('RGBA')
     im = im.rotate( angle, expand=1 )
     im = im.resize((x_max, y_max))
-    #dst_im.paste( rot, (50, 50), rot )
-    im.save("output/new_foo.png")
+    im.save(transformed_heatmap)
 
-    heat_img = cv2.imread('output/new_foo.png', cv2.IMREAD_COLOR)
-    dst = cv2.addWeighted(output_img, 0.5, heat_img, 0.5, 0)
+    # OpenCV: 
+    heat_img = cv2.imread(transformed_heatmap, cv2.IMREAD_COLOR)
+    dst = cv2.addWeighted(output_img, 0.8, heat_img, 0.5, 0)
     cv2.imshow('dst', dst)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     cv2.imwrite(heatmap_file, dst)
-
     
     
 if __name__ == "__main__":
