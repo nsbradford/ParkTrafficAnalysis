@@ -22,9 +22,9 @@ Takes a satellite image from /images to use as a reference base. Then, generate 
                             number of bins to use for the Heatmap
 
 ##Input
-![alt_tag](https://github.com/nsbradford/IQP/blob/master/output/1_data_map.png)
+![huzzah](output/1_data_map.png)
 
 ##Output
-![alt tag](https://github.com/nsbradford/IQP/blob/master/output/5_heatmap.png)
+![huzzah](output/5_heatmap.png)
 
 ###EOF
