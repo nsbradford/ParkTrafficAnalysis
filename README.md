@@ -1,9 +1,9 @@
 #IQP
-Interactive Qualifying Project (IQP) location analysis tool.
-Author: Nicholas S. Bradford
 
 A method for the Worcester Polytechnic Institute (WPI) Interactive Qualifying Project (IQP), Melbourne-B15: Team CERES.
 Used to analyze the locations of CERES park visitors to find hotspots.
+
+Author: Nicholas S. Bradford
 
 ##Description
 
