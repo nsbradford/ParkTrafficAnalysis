@@ -65,11 +65,11 @@ def cluster_map(data, n_clusters, output_img, base_img):
     kmeans_data = data
     kmeans.fit(kmeans_data)
     for x, y in data:
-        cv2.circle(output_img, (int(y), int(x)), 4, (0, 0, 255), -1)
+        cv2.circle(output_img, (int(y), int(x)), 2, (0, 0, 200), -1)
     cv2.imwrite(RAW_VISUAL_FILE, output_img - base_img)
     cv2.imwrite(MAP_VISUAL_FILE, output_img)
     for x, y in kmeans.cluster_centers_:
-        cv2.circle(output_img, (int(y), int(x)), 10, (255, 150, 0), -1)
+        cv2.circle(output_img, (int(y), int(x)), 12, (0, 0, 255), -1)
     cv2.imwrite(RAW_CLUSTERS_FILE, output_img - base_img)
     cv2.imwrite(MAP_CLUSTERS_FILE, output_img)
 
