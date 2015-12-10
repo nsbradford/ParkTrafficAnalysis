@@ -11,7 +11,7 @@ Takes a satellite image from /images to use as a reference base. Then, generate 
 
 Dependencies: opencv, scikit-learn, matplotlib, PIL
 
-##Usage:
+##Usage
 
     iqp.py [-h] [-o N_OBSERVATIONS] [-c N_CLUSTERS] [-b N_BINS]
     optional arguments:
@@ -22,6 +22,12 @@ Dependencies: opencv, scikit-learn, matplotlib, PIL
                             number of clusters to generate with KMeans
       -b N_BINS, --n_bins N_BINS
                             number of bins to use for the Heatmap
+
+##Data Collection Method for CERES
+
+You will need at least 4-5 participants for data collection to cover the entire CERES park. Begin by making copies of "/images/satellite.png" and distributing them to each participant, who will then open the image using Microsoft Paint and select the Pencil tool (edits single pixels) with Red color (any non-greyscale color should work). Distribute the participants so that they combined have a view of the entire park, and assign them a specific area such that there is no overlap between participants. Then, every 2 minutes over the course of an hour (or longer), the participants use the pencil tool to mark the positions of all visitors in their area. 
+
+After the set amount of time has elapsed, every participant returns their modified image file, which are moved to the /observations folder and renamed "observation_XX" (where XX is the 2-digit increasing number of the observation, starting with 01). Finally, run the program to produce the hotspot clusters and heatmap.
 
 ##Input
 ![huzzah](output/1_data_map.png)
