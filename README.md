@@ -9,6 +9,8 @@ Author: Nicholas S. Bradford
 
 Takes a satellite image from /images to use as a reference base. Then, generate a point cloud by recording all changed pixels between the base and the /observations observation images (park visitor locations marked on the map). Using this point cloud, apply the KMeans clustering algorithm to find centroids, and a gaussian distribution to create Heatmap. Finally, blend with base image and save to /output. Original satellite image size and file names are hard-coded in as globals.
 
+Dependencies: opencv, scikit-learn, matplotlib, PIL
+
 ##Usage:
 
     iqp.py [-h] [-o N_OBSERVATIONS] [-c N_CLUSTERS] [-b N_BINS]
