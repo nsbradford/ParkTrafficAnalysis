@@ -1,7 +1,7 @@
-#IQP
+#Park Traffic Analysis
 
 A method for the Worcester Polytechnic Institute (WPI) Interactive Qualifying Project (IQP), Melbourne-B15: Team CERES.
-Used to analyze the locations of CERES park visitors to find hotspots.
+Used to analyze the locations of CERES park visitors throughout the day, in order to determine high-traffic areas and provide recommendations for exhibit alteration and development.
 
 Author: Nicholas S. Bradford
 
