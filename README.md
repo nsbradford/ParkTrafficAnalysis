@@ -30,9 +30,8 @@ You will need at least 4-5 participants for data collection to cover the entire 
 After the set amount of time has elapsed, every participant returns their modified image file, which are moved to the /observations folder and renamed "observation_XX" (where XX is the 2-digit increasing number of the observation, starting with 01). Finally, run the program to produce the hotspot clusters and heatmap.
 
 ##Input
-![huzzah](output/1_data_map.png)
+![raw data](output/1_data_map.png)
 
 ##Output
-![huzzah](output/5_heatmap.png)
+![output data](output/5_heatmap.png)
 
-###EOF
